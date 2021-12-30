@@ -9,8 +9,10 @@ class ventLines:
 
 
 class oceanFloor:
+
     def __init__(self, sizeOfGrid):
         self.grid = self.Makegrid(sizeOfGrid)
+
 
     def Makegrid(self, size):
         the_grid = []
@@ -27,6 +29,40 @@ class oceanFloor:
             for col in row:
                 print(col, end="")
             print()
+    
+    def markLine(self, VentLine):
+        self.x1, self.y1 = VentLine.begin[0], VentLine.begin[1]
+        self.x2, self.y2 = VentLine.end[0], VentLine.end[1]
+        self.xDiff = abs(self.x1 - self.x2)
+        self.yDiff = abs(self.y1 - self.y2)
+        if self.yDiff == 0:
+            if self.x1 < self.x2:
+                for i in range(self.x1, (self.x2 +1)):
+                    if self.grid[self.y1][i] == '.':
+                        self.grid[self.y1][i] = 1
+                    else:
+                        self.grid[self.y1][i] += 1
+            else:
+                for i in range(self.x2, (self.x1 + 1)):
+                    if self.grid[self.y1][i] == '.':
+                        self.grid[self.y1][i] = 1
+                    else:
+                        self.grid[self.y1][i] += 1
+        
+        if self.xDiff == 0:
+            if self.y1 < self.y2:
+                for i in range(self.y1, (self.y2 + 1)):
+                    if self.grid[i][self.x1] == '.':
+                        self.grid[i][self.x1] = 1
+                    else:
+                        self.grid[i][self.x1] += 1
+            else:
+                for i in range(self.y2, (self.y1 +1)):
+                    if self.grid[i][self.x1] == '.':
+                        self.grid[i][self.x1] = 1
+                    else:
+                        self.grid[i][self.x1] += 1
+
 
 def get_data(filePath):
     with open(filePath, 'r') as openFile:
@@ -48,5 +84,6 @@ for corrod in readTest:
 
 
 x = oceanFloor(10)
-
+for i in lines:
+    x.markLine(i)
 x.print()
