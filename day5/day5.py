@@ -19,7 +19,7 @@ class oceanFloor:
         for row in range(size):
             the_row = []
             for col in range(size):
-                the_row.append('.')
+                the_row.append(0)
             the_grid.append(the_row)
 
         return the_grid
@@ -30,6 +30,42 @@ class oceanFloor:
                 print(col, end="")
             print()
     
+    def markLine2(self, aVentLine):
+        self.xDiff = aVentLine.begin[0] - aVentLine.end[0]
+        self.yDiff = aVentLine.begin[1] - aVentLine.end[1]
+        self.currentX = aVentLine.begin[0] 
+        self.currentY = aVentLine.begin[1] 
+        xchange = 0
+        ychange = 0 
+        if self.xDiff > 0:
+            xchange = -1
+        else:
+            xchange = 1
+        if self.yDiff > 0:
+            ychange = -1
+        else:
+            ychange = 1
+        
+        self.check_spot(self.currentY, self.currentX)
+
+        while True:
+            
+            if self.currentX != aVentLine.end[0]:
+                self.currentX += xchange
+            if self.currentY != aVentLine.end[1]:
+                self.currentY += ychange
+            self.check_spot(self.currentY, self.currentX)
+            if self.currentX == aVentLine.end[0] and self.currentY == aVentLine.end[1]:
+                break
+
+    def check_spot(self, y, x):
+        if self.grid[y][x] < 1:
+            self.grid[y][x] = 1
+        else:
+            self.grid[y][x] += 1       
+
+
+
     def markLine(self, VentLine):
         self.x1, self.y1 = VentLine.begin[0], VentLine.begin[1]
         self.x2, self.y2 = VentLine.end[0], VentLine.end[1]
@@ -63,7 +99,13 @@ class oceanFloor:
                     else:
                         self.grid[i][self.x1] += 1
 
-
+    def OverLap(self):
+        count = 0
+        for row in self.grid:
+            for col in row:
+                if col > 1:
+                    count += 1
+        return count
 def get_data(filePath):
     with open(filePath, 'r') as openFile:
         data = openFile.read()
@@ -72,7 +114,7 @@ def get_data(filePath):
 
 
 
-readData = get_data(r"C:\Users\nickk\Documents\Code\Python\AdventOfCode2021\AdventOfCode2021\day5\day5Data.txt")
+readData = get_data(r"C:\Users\nickk\Documents\Code\Python\AdventOfCode2021\AdventOfCode2021\day5\day5.txt")
 readTest = [x.split(" -> ") for x in readData.split("\n")]
 lines = []
 
@@ -82,8 +124,10 @@ for corrod in readTest:
     x = ventLines(beg, end)
     lines.append(x)    
 
+test = ventLines((9, 7),(7, 9))
 
-x = oceanFloor(10)
-for i in lines:
-    x.markLine(i)
-x.print()
+x = oceanFloor(1000)
+for line in lines:
+    x.markLine2(line)
+print(f" Overlapping lines = {x.OverLap()}")
+
